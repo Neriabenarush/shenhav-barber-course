@@ -30,33 +30,27 @@ const CONFIG = {
   /* --- תמונת המדריך --- */
   instructorPhoto: "https://picsum.photos/seed/barber-instructor/700/900",
 
-  /* גלריית אינסטגרם — קישורים לפוסטים/רילים שיוטמעו בדף (קליל; נטען ישירות מאינסטגרם).
-     רוצה תמונות נקיות במקום? השאר [] והשתמש במערך gallery שלמטה. */
-  instagramPosts: [
-    "https://www.instagram.com/p/DWuE76AAnh1/",
-    "https://www.instagram.com/p/DWzQEY8gvHT/",
-    "https://www.instagram.com/p/C3sU4PesC7w/",
-    "https://www.instagram.com/p/CSg9BYDsEIC/",
-    "https://www.instagram.com/p/CHGhpUYsAzg/",
-    "https://www.instagram.com/p/CEPZ6fvMdAR/",
-    "https://www.instagram.com/p/CDeno_5sVCe/",
-    "https://www.instagram.com/p/CC0tf27sSKn/",
-    "https://www.instagram.com/reel/C86n89yso5j/",
-  ],
+  /* גלריית אינסטגרם (הטמעה) — מושבת. רצינו מראה נקי "כאילו צילמנו עכשיו", בלי שם המשתמש/תגובות
+     של אינסטגרם, ועם וידאו שמתנגן בדף עצמו. לכן עברנו לתמונות/וידאו מקומיים (מערך gallery למטה).
+     הקישורים הקודמים שמורים ב-PROJECT-STATUS.md אם נרצה אותם בעתיד. */
+  instagramPosts: [],
 
   /* =========================================================
      גלריית עבודות
      - type: 'image' לתמונה רגילה, 'video' לסרטון
      - לתמונה: שים את הקובץ בתיקיית assets/ והפנה אליו, או הדבק כתובת
-     - לסרטון: 'embed' = קישור הטמעה של יוטיוב/אינסטגרם
+     - תמונה: { type: "image", src: "assets/cut1.jpg", caption: "פייד קלאסי" }
+     - סרטון: { type: "video", src: "assets/clip1.mp4", poster: "assets/clip1.jpg", caption: "תהליך מלא" }
+       (הווידאו מתנגן בדף עצמו, בלי מיתוג חיצוני)
+     פריט בלי src מוצג כ-ממלא-מקום נקי. שמים את הקבצים בתיקיית assets/.
      ========================================================= */
   gallery: [
-    { type: "image", src: "https://picsum.photos/seed/cut1/600/750", caption: "פייד קלאסי" },
-    { type: "video", src: "https://picsum.photos/seed/cut2/600/750", caption: "תהליך מלא", embed: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-    { type: "image", src: "https://picsum.photos/seed/cut3/600/750", caption: "עיצוב זקן" },
-    { type: "image", src: "https://picsum.photos/seed/cut4/600/750", caption: "מעבר חד" },
-    { type: "image", src: "https://picsum.photos/seed/cut5/600/750", caption: "תספורת ילדים" },
-    { type: "video", src: "https://picsum.photos/seed/cut6/600/750", caption: "טיפ מהיר", embed: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+    { type: "image" },
+    { type: "image" },
+    { type: "image" },
+    { type: "video" },
+    { type: "image" },
+    { type: "image" },
   ],
 
   /* --- סילבוס / מה לומדים --- */
@@ -141,15 +135,26 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(processIG, 1200);
     setTimeout(processIG, 3000);
   } else if (galleryGrid) {
-    galleryGrid.innerHTML = CONFIG.gallery.map((item, i) => `
-      <div class="gallery__item reveal" data-index="${i}">
-        <img src="${item.src}" alt="${item.caption || "עבודה"}" loading="lazy" />
-        ${item.type === "video" ? `
-          <div class="gallery__play"><span>
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-          </span></div>` : ""}
-        <div class="gallery__caption">${item.caption || ""}</div>
-      </div>`).join("");
+    const playBtn = `<div class="gallery__play"><span><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span></div>`;
+    const phIcon = `<svg viewBox="0 0 24 24" class="gallery__ph-icon" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>`;
+    galleryGrid.innerHTML = CONFIG.gallery.map((item, i) => {
+      const isVideo = item.type === "video";
+      const hasSrc = item.src && item.src.trim();
+      if (!hasSrc) {
+        return `<div class="gallery__item gallery__item--ph">
+          <div class="gallery__ph">${phIcon}<span>${isVideo ? "סרטון" : "עבודה"}</span></div>
+          ${isVideo ? playBtn : ""}
+        </div>`;
+      }
+      const media = isVideo
+        ? `<video src="${item.src}"${item.poster ? ` poster="${item.poster}"` : ""} muted preload="metadata" playsinline></video>`
+        : `<img src="${item.src}" alt="${item.caption || "עבודה"}" loading="lazy" />`;
+      return `<div class="gallery__item reveal" data-index="${i}">
+        ${media}
+        ${isVideo ? playBtn : ""}
+        ${item.caption ? `<div class="gallery__caption">${item.caption}</div>` : ""}
+      </div>`;
+    }).join("");
   }
 
   /* ---- סילבוס ---- */
@@ -202,8 +207,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const lightbox = $("#lightbox");
   const lbContent = $("#lightboxContent");
   const openLightbox = (item) => {
-    lbContent.innerHTML = item.type === "video" && item.embed
-      ? `<iframe src="${item.embed}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`
+    lbContent.innerHTML = item.type === "video"
+      ? `<video src="${item.src}" controls autoplay playsinline></video>`
       : `<img src="${item.src}" alt="${item.caption || ""}" />`;
     lightbox.hidden = false;
     document.body.style.overflow = "hidden";
@@ -211,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeLightbox = () => { lightbox.hidden = true; lbContent.innerHTML = ""; document.body.style.overflow = ""; };
 
   if (galleryGrid) {
-    $$(".gallery__item", galleryGrid).forEach(el =>
+    $$(".gallery__item[data-index]", galleryGrid).forEach(el =>
       el.addEventListener("click", () => openLightbox(CONFIG.gallery[+el.dataset.index])));
   }
   $("#lightboxClose")?.addEventListener("click", closeLightbox);

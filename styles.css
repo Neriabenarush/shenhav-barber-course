@@ -243,6 +243,15 @@ ul { list-style: none; }
 }
 .gallery--ig .instagram-media { margin: 0 !important; }
 
+/* וידאו מקומי באריח + ממלאי-מקום נקיים */
+.gallery__item video { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
+.gallery__item:hover video { transform: scale(1.06); }
+.gallery__item--ph { background: var(--surface); border: 1px dashed var(--line); cursor: default; }
+.gallery__ph { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 12px; align-items: center; justify-content: center; }
+.gallery__ph-icon { width: 48px; height: 48px; color: var(--accent); opacity: .85; }
+.gallery__ph span { color: var(--muted); font-size: .9rem; letter-spacing: 2px; }
+.lightbox__content video { width: 100%; border-radius: var(--radius); max-height: 85vh; background: #000; }
+
 /* ---------- סילבוס ---------- */
 .curriculum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .module {
