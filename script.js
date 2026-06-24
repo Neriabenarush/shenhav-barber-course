@@ -30,6 +30,20 @@ const CONFIG = {
   /* --- תמונת המדריך --- */
   instructorPhoto: "https://picsum.photos/seed/barber-instructor/700/900",
 
+  /* גלריית אינסטגרם — קישורים לפוסטים/רילים שיוטמעו בדף (קליל; נטען ישירות מאינסטגרם).
+     רוצה תמונות נקיות במקום? השאר [] והשתמש במערך gallery שלמטה. */
+  instagramPosts: [
+    "https://www.instagram.com/p/DWuE76AAnh1/",
+    "https://www.instagram.com/p/DWzQEY8gvHT/",
+    "https://www.instagram.com/p/C3sU4PesC7w/",
+    "https://www.instagram.com/p/CSg9BYDsEIC/",
+    "https://www.instagram.com/p/CHGhpUYsAzg/",
+    "https://www.instagram.com/p/CEPZ6fvMdAR/",
+    "https://www.instagram.com/p/CDeno_5sVCe/",
+    "https://www.instagram.com/p/CC0tf27sSKn/",
+    "https://www.instagram.com/reel/C86n89yso5j/",
+  ],
+
   /* =========================================================
      גלריית עבודות
      - type: 'image' לתמונה רגילה, 'video' לסרטון
@@ -116,7 +130,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* ---- גלריה ---- */
   const galleryGrid = $("#galleryGrid");
-  if (galleryGrid) {
+  if (galleryGrid && CONFIG.instagramPosts && CONFIG.instagramPosts.length) {
+    /* גלריית אינסטגרם — הטמעת פוסטים/רילים (קליל, נטען ישירות מאינסטגרם) */
+    galleryGrid.classList.add("gallery--ig");
+    galleryGrid.innerHTML = CONFIG.instagramPosts.map(url => `
+      <blockquote class="instagram-media" data-instgrm-permalink="${url}" data-instgrm-version="14"></blockquote>
+    `).join("");
+    const processIG = () => { if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process(); };
+    processIG();
+    setTimeout(processIG, 1200);
+    setTimeout(processIG, 3000);
+  } else if (galleryGrid) {
     galleryGrid.innerHTML = CONFIG.gallery.map((item, i) => `
       <div class="gallery__item reveal" data-index="${i}">
         <img src="${item.src}" alt="${item.caption || "עבודה"}" loading="lazy" />

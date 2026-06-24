@@ -235,6 +235,14 @@ ul { list-style: none; }
 .gallery__item:hover .gallery__play span { transform: scale(1.1); }
 .gallery__play svg { margin-right: -3px; }
 
+/* גלריית אינסטגרם (הטמעות) — רשת רספונסיבית שמרכזת את הכרטיסים */
+.gallery.gallery--ig {
+  grid-template-columns: repeat(auto-fit, minmax(326px, 1fr));
+  justify-items: center;
+  align-items: start;
+}
+.gallery--ig .instagram-media { margin: 0 !important; }
+
 /* ---------- סילבוס ---------- */
 .curriculum { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .module {
