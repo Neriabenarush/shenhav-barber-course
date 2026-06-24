@@ -206,11 +206,18 @@ document.addEventListener("DOMContentLoaded", () => {
   navToggle?.addEventListener("click", () => nav.classList.toggle("open"));
   $$("a", nav).forEach(a => a.addEventListener("click", () => nav.classList.remove("open")));
 
-  /* ---- טופס לידים (דמו — בלי שרת) ---- */
+  /* ---- טופס לידים → וואטסאפ (חינם, בלי שרת) ----
+     בלחיצה נפתח וואטסאפ עם השם והטלפון של הפונה, מוכן לשליחה אל מספר העסק. */
   const form = $("#leadForm");
   form?.addEventListener("submit", e => {
     e.preventDefault();
-    /* בהמשך: כאן נחבר שליחה אמיתית (Formspree / וואטסאפ). כרגע הדגמה. */
+    const data = new FormData(form);
+    const name = (data.get("name") || "").toString().trim();
+    const phone = (data.get("phone") || "").toString().trim();
+    const msg = `היי שנהב! אשמח לפרטים על הקורס 🙏\nשם: ${name}\nטלפון: ${phone}`;
+    const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+    const win = window.open(url, "_blank");
+    if (!win) window.location.href = url;   /* אם חוסם חלונות קופצים — נווט באותו טאב */
     form.hidden = true;
     $("#leadSuccess").hidden = false;
   });
